@@ -1,0 +1,119 @@
+CREATE DATABASE IF NOT EXISTS qb;
+CREATE DATABASE IF NOT EXISTS qb_test;
+CREATE TABLE IF NOT EXISTS orders (
+    order_id INT PRIMARY KEY,
+    order_number VARCHAR(128),
+    order_data  VARCHAR(4096),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS invoices (
+	invoice_id INT PRIMARY KEY,
+    order_id INT UNIQUE,
+	INDEX ord_id (order_id),
+    FOREIGN KEY (order_id)
+		REFERENCES orders(order_id)
+        ON DELETE CASCADE,    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS order_error (
+	id INT auto_increment PRIMARY KEY,
+    order_id INT,
+    INDEX ord_id (order_id),
+	FOREIGN KEY (order_id)
+		REFERENCES orders(order_id)
+        ON DELETE CASCADE,  
+    err VARCHAR(4096),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS bill (
+    bill_id INT PRIMARY KEY,
+    bill_number VARCHAR(128),
+    bill_data VARCHAR(4096),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS bill_references (
+    ref_id INT  PRIMARY KEY,
+    bill_id INT,
+	INDEX b_id (bill_id),
+    FOREIGN KEY (bill_id)
+		REFERENCES bill(bill_id)
+        ON DELETE CASCADE,    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS bill_error (
+	id INT auto_increment PRIMARY KEY,
+    bill_id INT,
+    INDEX b_id (bill_id),
+	FOREIGN KEY (bill_id)
+		REFERENCES bill(bill_id)
+        ON DELETE CASCADE,     
+    err VARCHAR(4096),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=INNODB;
+
+-- HashMap section
+
+CREATE TABLE IF NOT EXISTS terms_ref (
+    ref_name VARCHAR(80) PRIMARY KEY,
+    ref TEXT
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS vendor_ref (
+    vendor_ref_name VARCHAR(80) PRIMARY KEY,
+    vendor_ref TEXT
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS customer_ref (
+    customer_ref_name VARCHAR(80) PRIMARY KEY,
+    customer_ref TEXT
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS item_ref (
+    item_ref_name VARCHAR(80) PRIMARY KEY,
+    item_ref TEXT
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS inventory_ret (
+    inventory_ret_name VARCHAR(80) PRIMARY KEY,
+    inventory_ret TEXT
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS inventory_adjustments (
+    inventory_adjustments VARCHAR(128) PRIMARY KEY
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS ref_number (
+    po_number VARCHAR(80) PRIMARY KEY,
+    ref_number VARCHAR(128)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS account_ref (
+    full_name VARCHAR(80) PRIMARY KEY,
+    list_id VARCHAR(128)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS customer_sales_tax_code_ref (
+    customer_name VARCHAR(80) PRIMARY KEY,
+    list_id VARCHAR(128)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS sales_receipt (
+    memo VARCHAR(80) PRIMARY KEY,
+    ref_number VARCHAR(128)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS bill_ref (
+    po_number VARCHAR(80) PRIMARY KEY,
+    ref_number VARCHAR(128)
+)ENGINE=INNODB;
